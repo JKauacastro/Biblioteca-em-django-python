@@ -1,2 +1,5 @@
+Primeiramente eu usei a pagina de admin do django e fui adicionando coisas da biblioteca entao quando for rodar crie um superuser e entre nessa pagina http://127.0.0.1:8000/admin
+
 pip install django
+
 pip install pillow
