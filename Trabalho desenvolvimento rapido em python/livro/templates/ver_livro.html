@@ -1,33 +1,136 @@
 {% extends 'base.html' %}
 
 
-{% block 'conteudo' %} 
-    <div style="text-align: center" class="container">
-        <img width = "50%" src="{{livro.img.url}}">
-        <h1>{{livro.nome}}</h1>
-        <h2>Genero: {{livro.categoria}}</h2>
-        <h2>Autor: {{livro.autor}}</h2>
-        <h3>Data de lancamento: {{livro.data_lancamento}}</h3>
-        <h4>Data de emprestimo: {{livro.data_emprestimo}}</h4>
-        <h4>Data de devolução: {{livro.data_devolucao}}</h4>
-        {% if livro.emprestado %}
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check-fill" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5m8.854-9.646a.5.5 0 0 0-.708-.708L7.5 7.793 6.354 6.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0z"/>
-            </svg>
-            Emprestado
-            <br>
-            <button type="button" class="btn btn-outline-success">Ja emprestado</button>
-        {% else %}
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
-                <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
-            </svg>
-            Disponivel
-            <br>
-            <button type="button" class="btn btn-outline-primary">Pedir</button>
-        {% endif %}
-        <br>
-        <button>Ver histórico de emprestimo</button>
+{% block 'conteudo' %}
 
+        
+
+<div style="text-align: center" class="container">
+    <br>
+    <img style="max-width:500px;" src="{{livro.img.url}}" alt="{{ livro.nome }}" >
+    <h1>{{livro.nome}}</h1>
+    <h2>Genero: {{livro.categoria}}</h2>
+    <h2>Autor: {{livro.autor}}</h2>
+    <h3>Data de lancamento: {{livro.data_lancamento}}</h3>
+    {% if livro.emprestado %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check-fill" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5m8.854-9.646a.5.5 0 0 0-.708-.708L7.5 7.793 6.354 6.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0z"/>
+        </svg>
+        Emprestado
+        <br>
+        <br>
+        <button type="button" class="btn btn-outline-success">Reservar</button>
+        <br>
+    {% else %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M10.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
+            <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
+        </svg>
+        Disponivel
+        <br>
+        <br>
+        <button type="button" class="btn btn-outline-primary">Pedir</button>
+        <br>
+    {% endif %}
+    <br>
+    {% if request.session.usuario and request.session.usuario == livro.usuario.id %}
+        <!-- Modal Emprestar livro-->
+            <div class="modal fade" id="emprestarlivro" tabindex="-1" role="dialog" aria-labelledby="emprestarlivro" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="emprestarlivro">Para quem voce quer emprestar?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{% url 'cadastrar_emprestimo' %}" method="POST">
+                            {% csrf_token %}
+                        <select class="form-control" name="nome_emprestado">
+                            {% for usuario in usuarios %}
+                                <option value="{{usuario.id}}">{{usuario.nome}}</option>
+                            {% endfor %}
+                        </select>
+                        <br>
+                        <input type="text" value="{{ livro.nome }}" class="form-control" readonly>
+                        <br>
+                        <input type="text" class="form-control" placeholder="Digite o nome para quem emprestou..." name="nome_emprestado_anonimo">
+                        <br>
+                        <input type="submit" class="btn btn-warning" value="Emprestar">
+                        </form>
+                    </div>
+                </div>
+                </div>
+            </div>
+        <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#emprestarlivro">
+            Emprestar livro
+        </button>
+        <br>
+        <br>
+        
+        <!-- Modal Excluir livro-->
+            <div class="modal fade" id="excluirlivro" tabindex="-1" role="dialog" aria-labelledby="excluirlivro" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="excluirlivro">Tem certeza que quer excluir o livro?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                        
+                        <a href="{% url 'excluir_livro' livro_id %}" class="btn btn-danger">Excluir</a>
+                    
+                    </div>
+                </div>
+                </div>
+            </div>
+        <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#excluirlivro">
+            Excluir livro
+        </button>
+        <br>
+        <br>
+    {% endif %}
+    <a href="{% url 'devolver_livro' %}" class="btn btn-outline-info">Devolver Livro</a>
+    <br>
+    <hr>
+    <h1>Histórico de emprestimo</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Data emprestimo</th>
+            <th scope="col">Data devolução</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in emprestimos %}
+                <tr>
+                {%if i.nome_emprestado_anonimo == None %}
+                    <th scope="row">{{i.nome_emprestado}}</th>
+                {% else %}
+                    <th scope="row">{{i.nome_emprestado_anonimo}}</th>
+                {% endif %}
+                <td>{{i.data_emprestimo}}</td>
+                <td>{{i.data_devolucao}}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+            <th scope="row">2</th>
+            <td>Jacob</td>
+            <td>Thornton</td>
+            </tr>
+            <tr>
+            <th scope="row">3</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            </tr>
+        </tbody>
+        </table>
     </div>
+
+</div>
+
 {% endblock %}

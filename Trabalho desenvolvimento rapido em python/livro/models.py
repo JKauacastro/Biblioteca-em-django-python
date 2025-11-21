@@ -9,19 +9,13 @@ class Categoria(models.Model):
     def __str__(self) -> str:
         return self.nome
 
-#class Emprestimos(models.Model):
-
-
 class Livros(models.Model):
     img = models.ImageField(upload_to='capa_livro', null=True, blank=True)
     nome = models.CharField(max_length = 100)
     autor = models.CharField(max_length = 30)
-    co_autor = models.CharField(max_length = 30, blank = True)
     data_lancamento = models.DateField(blank = True, null = True)
     emprestado = models.BooleanField(default = False)
     usuario = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING)
-    data_emprestimo = models.DateTimeField(blank = True, null = True)
-    data_devolucao = models.DateTimeField(blank = True, null = True)
     categoria = models.ForeignKey(Categoria, on_delete = models.DO_NOTHING)
     
 
@@ -30,3 +24,16 @@ class Livros(models.Model):
 
     def __str__(self):
         return self.nome
+    
+class Emprestimos(models.Model):
+    nome_emprestado = models.ForeignKey(Usuario, on_delete=models.DO_NOTHING, blank= True, null = True)
+    nome_emprestado_anonimo = models.CharField(max_length = 30, blank= True, null = True)
+    data_emprestimo = models.DateField(blank = True, null = True)
+    data_devolucao = models.DateField(blank = True, null = True)
+    livro = models.ForeignKey(Livros, on_delete=models.DO_NOTHING)
+
+    class Meta:
+        verbose_name = 'Emprestimo'
+
+    def __str__(self) -> str:
+        return f"{self.nome_emprestado} | {self.livro}" 

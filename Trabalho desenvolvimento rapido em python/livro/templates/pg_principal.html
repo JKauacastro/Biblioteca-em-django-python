@@ -3,22 +3,10 @@
 
 {% block 'conteudo' %} 
 
+
+<h1 style="text-align: center;">Todos os Livros</h1>
+
 <div class="container">
-    <br>
-    {% if status == '6'%}
-        <div class="alert alert-success" role="alert">
-          Livro cadastrado com sucesso
-        </div>
-
-    {% endif %}
-
-    {% if status == '7'%}
-        <div class="alert alert-success" role="alert">
-          Erro ao cadastrar livro. Tente novamente.
-        </div>
-
-    {% endif %}
-
     <div class="row">
         
         {% for livro in livros %}
@@ -46,13 +34,11 @@
                     </div>
                 </div>
             </div>
-        {% empty %}
-            <li>Nenhum livro cadastrado.</li>
         {% endfor %}
-    
-    
-    
+
     </div>
 </div>
+
+
 
 {% endblock %}

@@ -4,22 +4,83 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <style>
+    .bg-blue-purple {
+        background: linear-gradient(135deg, #51a2ff, #d7b8f5);
+        min-height: 100vh;
+    }
+
+    </style>
+
     {% block 'head' %} {% endblock %}
 
     <title>{% block 'titulo' %} {% endblock %}</title>
+
   </head>
-  <body>
+  <body class="bg-blue-purple">
     <nav class="navbar navbar-dark bg-dark">
         <a class="navbar-brand" href="{% url 'home' %}">Biblioteca</a>
+        {% if request.session.usuario %}
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#exampleModal">
+            Cadastrar Livro
+          </button>
+
+          <!-- Modal -->
+          <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Cadastrar livro</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+
+                  <form method="POST" action="{% url 'cadastrar_livro' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <table>
+                      {{ form.as_table }}
+                    </table>
+                    <button type="submit" class="btn btn-primary" value="Cadastrar">Salvar</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+
+        <div class="btn-group dropleft">
+          <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Menu
+          </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="{% url 'pg_principal' %}">Pagina principal</a>
+              {% if not request.session.usuario %}
+                <a class="dropdown-item" href="{% url 'login' %}">Entrar</a>
+              {% endif %}
+              {% if request.session.usuario %}
+                <a class="dropdown-item" href="{% url 'livros_emprestados' %}">Livros emprestados</a>
+                <a class="dropdown-item" href="{% url 'home' %}">Meus livros</a>
+                <a class="dropdown-item" href="{% url 'sair' %}">Sair</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        
       </nav>
 
     {% block 'conteudo' %} {% endblock %}
 
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+    
 
   </body>
 </html>
